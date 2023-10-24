@@ -1,0 +1,23 @@
+{
+  "name": "jspi-demo",
+  "type": "module",
+  "packageManager": "yarn@4.0.0",
+  "scripts": {
+    "start": "web-dev-server --node-resolve --watch",
+    "copy": "terser ../wa-sqlite/src/examples/OPFS.js --compress module=true,passes=5 --mangle --mangle-props 'regex=/^#/' -o ./src/examples/OPFS.js"
+  },
+  "devDependencies": {
+    "@web/dev-server": "^0.3.6",
+    "comlink": "^4.4.1",
+    "monaco-editor": "0.34.1",
+    "terser": "^5.22.0"
+  },
+  "dependenciesMeta": {
+    "comlink@4.4.1": {
+      "unplugged": true
+    },
+    "monaco-editor@0.34.1": {
+      "unplugged": true
+    }
+  }
+}
