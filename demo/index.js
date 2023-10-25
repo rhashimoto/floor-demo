@@ -7,18 +7,20 @@ const MONACO_VS = location.hostname.endsWith('localhost') ?
   'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.34.1/min/vs';
 
 const DEFAULT_SQL = `
--- PRAGMA cache_size = 0;
---PRAGMA wal_checkpoint(3);
-BEGIN TRANSACTION;
+-- Demo of "WAL" in a SQLite VFS (requires Chrome 120 + experimental flags).
+-- See https://github.com/rhashimoto/wa-sqlite/discussions/116
+
+-- This trades some durability for performance (no per-transaction flush).
+PRAGMA synchronous=normal; -- default is full
+
+-- This sets the checkpoint interval in transactions (not pages).
+PRAGMA wal_autocheckpoint=3; -- default is 128
+
 DROP TABLE IF EXISTS foo;
-CREATE TABLE foo (x PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS foo (x PRIMARY KEY);
 INSERT OR REPLACE INTO foo VALUES (1), (2), (3);
 INSERT OR REPLACE INTO foo SELECT random() FROM foo;
---INSERT OR REPLACE INTO foo
---  WITH RECURSIVE
---    cnt(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM cnt WHERE x<1000)
---  SELECT x FROM cnt;
-COMMIT;
+
 SELECT * FROM foo LIMIT 10;
 SELECT COUNT(1) FROM foo;
 PRAGMA integrity_check;
